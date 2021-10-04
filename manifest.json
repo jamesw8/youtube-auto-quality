@@ -1,0 +1,21 @@
+{
+  "name": "Youtube Auto-Quality",
+  "description": "Better Auto quality",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["activeTab", "scripting"],
+  "web_accessible_resources": [
+    {
+      "resources": ["/js/setQuality.js"],
+      "matches": ["https://www.youtube.com/*"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
