@@ -41,7 +41,6 @@ function handlePlayer(player, callback = () => {}) {
   let highestQuality = player.getAvailableQualityLevels().at(0);
 
   player.setPlaybackQualityRange(highestQuality);
-  player.setPlaybackQuality(highestQuality);
 
   formattedLog(`Quality: ${currentQuality} => ${player.getPlaybackQuality()}`);
 
