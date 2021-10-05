@@ -1,7 +1,7 @@
 {
-  "name": "Youtube Auto-Quality",
-  "description": "Better Auto quality",
-  "version": "1.0",
+  "name": "Youtube Auto Quality",
+  "description": "YouTube's auto quality feature doesn't always set the video to the highest quality supported. This plugin will automatically set the quality to the best option for each YouTube video.",
+  "version": "0.1",
   "manifest_version": 3,
   "icons": { "48": "assets/icon48.png", "128": "assets/icon128.png" },
   "host_permissions": ["https://www.youtube.com/*"],
