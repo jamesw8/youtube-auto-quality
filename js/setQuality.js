@@ -15,7 +15,7 @@ const qualities = {
 };
 
 let observer = new MutationObserver(mutationCallback);
-observer.observe(document.documentElement || document.body, {
+observer.observe(document.body || document.documentElement, {
   childList: true,
   subtree: true,
 });
