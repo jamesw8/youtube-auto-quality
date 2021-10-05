@@ -1,3 +1,3 @@
-# Youtube Auto Quality
+# YouTube Auto Quality
 
-Youtube's Auto quality feature tends to be quite fickle despite having decent internet. This plugin will default the quality to the highest quality per video.
+YouTube's `auto` quality feature doesn't always set the video to the highest quality supported. This plugin will default the quality to the highest quality for each YouTube video automatically.
