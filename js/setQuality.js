@@ -1,45 +1,49 @@
-const qualities = {
-  auto: "auto",
-  "144p": "tiny",
-  "240p": "small",
-  "360p": "medium",
-  "480p": "large",
-  "720p": "hd720",
-  "720p60": "hd720",
-  "1080p": "hd1080",
-  "1080p60": "hd1080",
-  "1440p": "hd1440",
-  "2160p": "hd2160",
-  "2880p": "hd2880",
-  "4320p": "highres",
-};
+var observer = observer || new MutationObserver(mutationCallback);
+var moviePlayer;
 
-let observer = new MutationObserver(mutationCallback);
 observer.observe(document.body || document.documentElement, {
   childList: true,
   subtree: true,
+  attributes: true,
 });
 
 function mutationCallback(mutations, observer) {
-  mutations.forEach((mutation) => {
-    mutation.addedNodes.forEach((node) => {
-      if (node.id === "movie_player")
-        handlePlayer(node, () => observer.disconnect());
-    });
-  });
+  for (let mutation of mutations) {
+    switch (mutation.type) {
+      case "childList": {
+        for (let node of mutation.addedNodes) {
+          if (node.id === "movie_player") {
+            moviePlayer = node;
+            handlePlayer(moviePlayer, () => observer.disconnect());
+            return;
+          }
+        }
+      }
+      case "attributes": {
+        if (!moviePlayer) {
+          break;
+        }
+        if (mutation.target.id === "movie_player") {
+          if (moviePlayer.getAvailableQualityLevels().length > 0) {
+            observer.disconnect();
+
+            handlePlayer(moviePlayer);
+            return;
+          }
+        }
+      }
+    }
+  }
 }
 
-function handlePlayer(player, callback) {
+function handlePlayer(player, callback = () => {}) {
   let currentQuality = player.getPlaybackQuality();
-  let highestQuality = qualities[player.getAvailableQualityLabels().at(0)];
-  formattedLog(
-    `Current quality: ${currentQuality}. Highest available quality: ${highestQuality}`
-  );
+  let highestQuality = player.getAvailableQualityLevels().at(0);
 
   player.setPlaybackQualityRange(highestQuality);
   player.setPlaybackQuality(highestQuality);
 
-  formattedLog(`Set quality to: ${player.getPlaybackQuality()}`);
+  formattedLog(`Quality: ${currentQuality} => ${player.getPlaybackQuality()}`);
 
   callback();
 }
