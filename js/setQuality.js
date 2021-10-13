@@ -1,11 +1,14 @@
 var observer = observer || new MutationObserver(mutationCallback);
 var moviePlayer;
+setQuality();
 
-observer.observe(document.body || document.documentElement, {
-  childList: true,
-  subtree: true,
-  attributes: true,
-});
+function setQuality() {
+  observer.observe(document.body || document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+  });
+}
 
 function mutationCallback(mutations, observer) {
   for (let mutation of mutations) {
@@ -39,6 +42,8 @@ function mutationCallback(mutations, observer) {
 function handlePlayer(player, callback = () => {}) {
   let currentQuality = player.getPlaybackQuality();
   let highestQuality = player.getAvailableQualityLevels().at(0);
+
+  if (!highestQuality) return;
 
   player.setPlaybackQualityRange(highestQuality);
 

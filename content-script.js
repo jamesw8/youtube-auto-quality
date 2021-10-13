@@ -7,12 +7,15 @@ injectQualityScript();
 );
 
 function injectQualityScript() {
-  if (window.location.pathname !== "/watch") return;
-
   let script = document.createElement("script");
-  script.src = chrome.runtime.getURL("js/setQuality.js");
+  script.src = getScriptUrl();
   script.onload = function () {
     this.remove();
   };
   (document.head || document.documentElement).appendChild(script);
+}
+
+function getScriptUrl() {
+  var src = src || chrome.runtime.getURL("js/setQuality.js");
+  return src;
 }
