@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+}
+
+button {
+  width: 100%;
+  font-weight: bold;
+  background-color: rgb(0, 0, 0);
+  color: #eee;
+}
+
+button:hover {
+  background-color: rgb(56, 56, 56);
+}
+/* Add checkmark emoji for the selected preferred quality */
+#current::after {
+  content: "\02714 \0fe0f";
+}
