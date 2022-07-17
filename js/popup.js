@@ -1,4 +1,4 @@
-const body = document.body;
+const buttonContainer = document.getElementById("button-container");
 
 // Convert qualities to human-readable badges
 const convertQualityToText = {
@@ -26,7 +26,7 @@ chrome.storage.sync
   });
 
 // Update quality when changed in the popup
-body.addEventListener("click", (event) => {
+buttonContainer.addEventListener("click", (event) => {
   const current = document.getElementById("current");
   const button = event.target;
   const quality = button.getAttribute("data-id");
