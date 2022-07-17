@@ -1,12 +1,13 @@
 {
   "name": "Youtube Auto Quality",
   "description": "Quality settings on Youtube videos will be defaulted to the highest quality possible.",
-  "version": "0.2",
+  "version": "0.3",
   "manifest_version": 3,
   "icons": { "48": "assets/icon48.png", "128": "assets/icon128.png" },
+  "permissions": ["storage"],
   "web_accessible_resources": [
     {
-      "resources": ["/js/setQuality.js"],
+      "resources": ["/js/setQuality.js", "/js/constants.js"],
       "matches": ["https://www.youtube.com/*"]
     }
   ],
@@ -17,5 +18,8 @@
       "run_at": "document_start",
       "all_frames": true
     }
-  ]
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
 }

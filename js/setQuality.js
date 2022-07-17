@@ -1,8 +1,44 @@
-var observer = observer || new MutationObserver(mutationCallback);
-var moviePlayer;
-setQuality();
+// Use to convert for number comparisons
+var convertQualityToText = {
+  hd2160: 2160,
+  hd1440: 1440,
+  hd1080: 1080,
+  hd720: 720,
+  large: 480,
+  medium: 360,
+  small: 240,
+  tiny: 144,
+  auto: "auto",
+};
 
-function setQuality() {
+var convertTextToQuality = {
+  2160: "hd2160",
+  1440: "hd1440",
+  1080: "hd1080",
+  720: "hd720",
+  480: "large",
+  360: "medium",
+  240: "small",
+  144: "tiny",
+  auto: "auto",
+};
+
+var observer = observer || new MutationObserver(mutationCallback);
+var moviePlayer, currentPlayer;
+var preferredQuality = document.currentScript.getAttribute("data-id");
+
+// If a valid movie player isn't stored, then use the observer to find the node
+if (validMoviePlayer()) {
+  handleMoviePlayer(moviePlayer);
+} else {
+  findMoviePlayerAndSetQuality();
+}
+
+function validMoviePlayer() {
+  return moviePlayer && moviePlayer.getAvailableQualityLevels().length > 0;
+}
+
+function findMoviePlayerAndSetQuality() {
   observer.observe(document.body || document.documentElement, {
     childList: true,
     subtree: true,
@@ -14,15 +50,19 @@ function mutationCallback(mutations, observer) {
   for (let mutation of mutations) {
     switch (mutation.type) {
       case "childList": {
+        // On initial video visit
         for (let node of mutation.addedNodes) {
           if (node.id === "movie_player") {
             moviePlayer = node;
-            handlePlayer(moviePlayer, () => observer.disconnect());
+            observer.disconnect();
+
+            handleMoviePlayer(moviePlayer);
             return;
           }
         }
       }
       case "attributes": {
+        // On subsequent video visits
         if (!moviePlayer) {
           break;
         }
@@ -30,7 +70,7 @@ function mutationCallback(mutations, observer) {
           if (moviePlayer.getAvailableQualityLevels().length > 0) {
             observer.disconnect();
 
-            handlePlayer(moviePlayer);
+            handleMoviePlayer(moviePlayer);
             return;
           }
         }
@@ -39,17 +79,38 @@ function mutationCallback(mutations, observer) {
   }
 }
 
-function handlePlayer(player, callback = () => {}) {
+function handleMoviePlayer(player) {
   let currentQuality = player.getPlaybackQuality();
-  let highestQuality = player.getAvailableQualityLevels().at(0);
+  const availableQualities = player
+    .getAvailableQualityLevels()
+    .map((quality) => convertQualityToText[quality]);
 
-  if (!highestQuality) return;
+  let highestPreferredQuality =
+    convertTextToQuality[
+      selectBestPreferredQuality(
+        availableQualities,
+        convertQualityToText[preferredQuality]
+      )
+    ];
 
-  player.setPlaybackQualityRange(highestQuality);
+  if (!highestPreferredQuality) return;
+
+  player.setPlaybackQualityRange(highestPreferredQuality);
 
   formattedLog(`Quality: ${currentQuality} => ${player.getPlaybackQuality()}`);
+}
 
-  callback();
+function selectBestPreferredQuality(availableQualities, preferredQuality) {
+  // If the preferred quality exists, then use that
+  if (availableQualities.includes(preferredQuality)) return preferredQuality;
+
+  // Find the best quality under the preferred quality
+  for (let quality of availableQualities) {
+    if (preferredQuality >= quality) {
+      return quality;
+    }
+  }
+  return "auto";
 }
 
 function formattedLog(logStr) {
